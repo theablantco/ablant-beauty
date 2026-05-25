@@ -64,6 +64,10 @@ export async function getFeaturedProducts() {
   return wcFetch('/products?featured=true&per_page=6');
 }
 
+export async function getNewestProducts(limit: number = 3) {
+  return wcFetch(`/products?per_page=${limit}&orderby=date&order=desc&status=publish`);
+}
+
 // ── Categories ─────────────────────────────────────────────────
 export async function getCategories() {
   return wcFetch('/products/categories?per_page=20&hide_empty=true');

@@ -1,7 +1,15 @@
 import Link from "next/link";
 import { FlashSaleBanner } from "@/components/shop/FlashSaleBanner";
+import { getNewestProducts } from "@/lib/woocommerce";
+import { ProductCard } from "@/components/shop/ProductCard";
 
-export default function HomePage() {
+export default async function HomePage() {
+  let newestProducts: any[] = [];
+  try {
+    newestProducts = await getNewestProducts(3);
+  } catch {
+    // WooCommerce not available
+  }
   return (
     <div>
       <section className="grid md:grid-cols-2 min-h-[500px]">
@@ -16,7 +24,7 @@ export default function HomePage() {
           </p>
           <div className="flex gap-3 flex-wrap mb-8">
             <Link href="/shop" className="bg-black text-white px-7 py-3 rounded font-semibold text-sm hover:bg-[#3a3a3a] transition-colors">Shop Wigs</Link>
-            <button className="border border-black px-6 py-3 rounded text-sm font-medium hover:bg-black hover:text-white transition-all">Watch Vanessa</button>
+            <a href="https://www.youtube.com/@vanessaablant" target="_blank" rel="noopener noreferrer" className="border border-black px-6 py-3 rounded text-sm font-medium hover:bg-black hover:text-white transition-all">Watch Vanessa</a>
           </div>
           <div className="flex items-center gap-2 text-sm text-gray-500">
             <span className="text-black tracking-wider">*****</span>
@@ -24,8 +32,8 @@ export default function HomePage() {
           </div>
         </div>
         <div className="bg-[#0a0a0a] flex items-center justify-center relative min-h-[300px]">
-          <div className="w-44 h-44 rounded-full bg-[#3a3a3a] border-2 border-white/10 flex items-center justify-center">
-            <span className="font-serif text-5xl font-bold text-white">VA</span>
+          <div className="w-64 h-64 rounded-full overflow-hidden border-4 border-white/10">
+            <img src="/images/vanessa-ablant.jpg" alt="Vanessa Ablant" className="w-full h-full object-cover" />
           </div>
           <p className="absolute bottom-20 right-8 text-white/40 text-sm italic font-serif">Vanessa Ablant</p>
           <div className="absolute bottom-8 right-8 bg-white text-black text-xs font-bold px-3 py-2 rounded flex items-center gap-1.5">
@@ -48,41 +56,41 @@ export default function HomePage() {
 
       <section className="max-w-7xl mx-auto px-6 py-16">
         <div className="flex items-baseline justify-between mb-8">
-          <h2 className="font-serif text-3xl font-bold">Vanessa&apos;s Wig Picks</h2>
+          <h2 className="font-serif text-3xl font-bold">New Products</h2>
           <Link href="/shop" className="text-sm text-gray-400 hover:text-black transition-colors">See all</Link>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[
-            {name:"Silky Straight 22 inch",type:"LACE FRONT",price:"R1,680",oldPrice:"R2,400",badge:"Best Seller",stock:"Only 5 left!"},
-            {name:"Honey Blonde Bob 14 inch",type:"HD LACE",price:"R1,950",badge:"New Drop",stock:""},
-            {name:"Deep Wave 18 inch",type:"FULL LACE",price:"R1,960",oldPrice:"R2,800",badge:"",stock:"Moving fast - 9 left"},
-          ].map((p) => (
-            <div key={p.name} className="border border-gray-100 rounded-lg overflow-hidden hover:shadow-lg transition-shadow">
-              <div className="h-56 bg-[#f0eee9] flex items-center justify-center relative">
-                {p.badge && (
-                  <span className={"absolute top-3 left-3 text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-sm " + (p.badge === "Best Seller" ? "bg-black text-white" : "bg-white text-black border border-black")}>
-                    {p.badge}
-                  </span>
-                )}
-                <svg width="64" height="64" viewBox="0 0 80 80" fill="none" opacity="0.15">
-                  <path d="M40 8C26 8 15 19 15 33c0 8 4 15 10 20v14h30V53c6-5 10-12 10-20C65 19 54 8 40 8z" fill="#000"/>
-                </svg>
-              </div>
-              <div className="p-4">
-                <p className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-1">{p.type}</p>
-                <p className="font-serif text-lg font-bold mb-1">{p.name}</p>
-                <p className="text-xs text-gray-400 mb-3">***** (432)</p>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-baseline gap-2">
-                    {p.oldPrice && <span className="text-xs text-gray-300 line-through">{p.oldPrice}</span>}
-                    <span className="font-serif text-xl font-bold">{p.price}</span>
+          {newestProducts.length > 0
+            ? newestProducts.map((product: any) => (
+                <ProductCard key={product.id} product={product} />
+              ))
+            : [
+                {name:"Silky Straight 22 inch",type:"LACE FRONT",price:"R1,680",oldPrice:"R2,400",badge:"New",stock:"Only 5 left!"},
+                {name:"Honey Blonde Bob 14 inch",type:"HD LACE",price:"R1,950",badge:"New",stock:""},
+                {name:"Deep Wave 18 inch",type:"FULL LACE",price:"R1,960",oldPrice:"R2,800",badge:"New",stock:"Moving fast - 9 left"},
+              ].map((p) => (
+                <div key={p.name} className="border border-gray-100 rounded-lg overflow-hidden hover:shadow-lg transition-shadow">
+                  <div className="h-56 bg-[#f0eee9] flex items-center justify-center relative">
+                    {p.badge && <span className="absolute top-3 left-3 text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-sm bg-black text-white">{p.badge}</span>}
+                    <svg width="64" height="64" viewBox="0 0 80 80" fill="none" opacity="0.15">
+                      <path d="M40 8C26 8 15 19 15 33c0 8 4 15 10 20v14h30V53c6-5 10-12 10-20C65 19 54 8 40 8z" fill="#000"/>
+                    </svg>
                   </div>
-                  <button className="bg-black text-white text-xs font-bold px-4 py-2 rounded">Add</button>
+                  <div className="p-4">
+                    <p className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-1">{p.type}</p>
+                    <p className="font-serif text-lg font-bold mb-1">{p.name}</p>
+                    <div className="flex items-center justify-between mt-3">
+                      <div className="flex items-baseline gap-2">
+                        {p.oldPrice && <span className="text-xs text-gray-300 line-through">{p.oldPrice}</span>}
+                        <span className="font-serif text-xl font-bold">{p.price}</span>
+                      </div>
+                      <button className="bg-black text-white text-xs font-bold px-4 py-2 rounded">Add</button>
+                    </div>
+                    {p.stock && <p className="text-xs font-bold mt-2 text-black">{p.stock}</p>}
+                  </div>
                 </div>
-                {p.stock && <p className="text-xs font-bold mt-2 text-black">{p.stock}</p>}
-              </div>
-            </div>
-          ))}
+              ))
+          }
         </div>
       </section>
 
@@ -95,8 +103,7 @@ export default function HomePage() {
               <p className="text-xs text-white/40">@vanessaablant</p>
             </div>
             <div className="flex gap-5 mt-1">
-              <div><p className="font-serif text-base font-bold">2.1M</p><p className="text-xs text-white/40 uppercase tracking-wider">Followers</p></div>
-              <div><p className="font-serif text-base font-bold">94%</p><p className="text-xs text-white/40 uppercase tracking-wider">Engagement</p></div>
+              <div><p className="font-serif text-base font-bold">128K</p><p className="text-xs text-white/40 uppercase tracking-wider">Followers</p></div>
             </div>
           </div>
           <div className="flex-1">
@@ -108,7 +115,7 @@ export default function HomePage() {
                 <span key={t} className="border border-white/20 text-white/60 text-xs px-4 py-1.5 rounded-full">{t}</span>
               ))}
             </div>
-            <button className="bg-white text-black px-6 py-3 rounded font-bold text-sm hover:bg-gray-100 transition-colors">Follow Vanessa</button>
+            <a href="https://www.instagram.com/vanessaablant" target="_blank" rel="noopener noreferrer" className="inline-block bg-white text-black px-6 py-3 rounded font-bold text-sm hover:bg-gray-100 transition-colors">Follow Vanessa</a>
           </div>
         </div>
       </section>

@@ -9,9 +9,8 @@ export default function AboutPage() {
           <p className="text-gray-600 leading-relaxed mb-4">So she sourced them herself. Today, every wig in the AblantBeauty collection is one Vanessa has personally worn, tested, and approved - because she refuses to sell anything she would not wear herself.</p>
           <p className="text-gray-600 leading-relaxed">What started as a personal mission has grown into a community of over 8,200 customers across South Africa who trust AblantBeauty for quality, consistency, and style.</p>
         </div>
-        <div className="bg-[#0a0a0a] rounded-2xl h-80 flex items-center justify-center relative overflow-hidden">
-          <div className="w-36 h-36 rounded-full bg-[#3a3a3a] flex items-center justify-center font-serif text-5xl font-bold text-white">VA</div>
-          <p className="absolute bottom-6 left-0 right-0 text-center text-white/40 text-sm italic font-serif">Vanessa Ablant, Founder</p>
+        <div className="rounded-2xl h-80 overflow-hidden">
+          <img src="/images/vanessa-ablant-2.jpg" alt="Vanessa Ablant" className="w-full h-full object-cover rounded-2xl" />
         </div>
       </div>
 
